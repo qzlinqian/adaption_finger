@@ -1,0 +1,13 @@
+<launch>
+  <rosparam command="delete" ns="adaption"/>
+  <rosparam command="load" file="$(find adaption_launchers)/config/geo_setup.yaml" ns="adaption"/>
+
+  <node
+    name="finger_pose_calculator"
+    pkg="adaption_simulation"
+    type="pose_calculator" />
+  <node
+    name="visualize_helper"
+    pkg="adaption_simulation"
+    type="visualize_helper" />
+</launch>
