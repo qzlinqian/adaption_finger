@@ -168,20 +168,20 @@ namespace adaption_simulation {
   
   void PoseCal::poseUpd(double delta_t) {
     Eigen::Matrix2d m_theta;
-    m_theta(1,1) = this->matrix_k;  // k
-    m_theta(1,0) = this->matrix_k + this->finger_weight_[1] * a1 * a2 * cos(this->now_ang[1]);
+    m_theta(1,1) = this->matrix_k/2;  // k
+    m_theta(1,0) = this->matrix_k/12 + this->finger_weight_[1] * a1 * a2 * cos(this->now_ang[1])/2;
     m_theta(0,1) = m_theta(1,0);
-    m_theta(0,0) = m_theta(1,0) * 2 - matrix_k + (finger_weight_[0] + finger_weight_[1]) * a1 * a1;
+    m_theta(0,0) = (finger_weight_[0]/3 + finger_weight_[1]) * a1 * a1 + this->matrix_k/12;
     // m_theta(1,0) = (finger_length_[1] * finger_length_[1] / 2 + finger_length_[0] * finger_length_[0] + finger_length_[0] * finger_length_[1] /2 * cos(now_ang[1])) * finger_weight_[1];
     // m_theta(1,1) = (3 * finger_length_[1] * finger_length_[1] + finger_length_[0] * finger_length_[1] /2 * cos(now_ang[1])) * finger_weight_[1];
     // m_theta(0,0)
     
     Eigen::Vector2d b_dt_ddt, g_theta, u_jf, dd_theta;
-    g_theta(1) = finger_weight_[1] * this->g * a2 * sin(this->now_ang[0] + now_ang[1]);
-    g_theta(0) = g_theta(1) + (finger_weight_[0] + finger_weight_[1]) * g * sin(now_ang[0]);
-    double temp = finger_weight_[1] * a1 * a2 * sin(now_ang[1]);
-    b_dt_ddt(0) = -temp * (2 * ang_vel[0] * ang_vel[1] + ang_vel[1] * ang_vel[1]);
-    b_dt_ddt(1) = temp * ang_vel[0] * ang_vel[0];
+    g_theta(1) = finger_weight_[1]/2 * g * a2 * sin(now_ang[0] + now_ang[1]);
+    g_theta(0) = g_theta(1) + (finger_weight_[0]/2 + finger_weight_[1]) * g * a1 * sin(now_ang[0]);
+    // double temp = finger_weight_[1] * a1 * a2 * sin(now_ang[1]);
+    b_dt_ddt(0) = -finger_weight_[1] * a1 * a2 * sin(now_ang[1]) * now_ang[1] * now_ang[1] /2;
+    b_dt_ddt(1) = finger_weight_[1] * a1 * a2 * (sin(now_ang[1]) + cos(now_ang[1])) * now_ang[1] * now_ang[2] /2;
     double dx2 = a2 * sin(now_ang[0] + now_ang[1]);
     double dy2 = a2 * cos(now_ang[0] + now_ang[1]);
     u_jf(0) = this->torque[0] + (dx2 + a1 * sin(now_ang[0])) * contactForce.Fy
