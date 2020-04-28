@@ -6,14 +6,15 @@
     default="False" />
   <param
     name="robot_description"
-    textfile="$(find adaption_finger)/urdf/adaption_finger.urdf" />
+    textfile="$(find adaption_finger)/urdf/adaption_finger_backup.urdf" 
+    sur_type="1"/>
   <param
     name="use_gui"
     value="$(arg gui)" />
-  <node
+  <!-- <node
     name="joint_state_publisher"
     pkg="joint_state_publisher"
-    type="joint_state_publisher" />
+    type="joint_state_publisher" /> -->
   <node
     name="robot_state_publisher"
     pkg="robot_state_publisher"

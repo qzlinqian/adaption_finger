@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="adaption_finger">
+  <xacro:property name="sur_type" default="1" />
+  <link
+    name="finger_base_link">
+    <inertial>
+      <origin
+        xyz="2.1684E-19 1.7347E-18 0.0012139"
+        rpy="0 0 0" />
+      <mass
+        value="0.00063708" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://adaption_finger/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://adaption_finger/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="upper_link">
+    <inertial>
+      <origin
+        xyz="4.3368E-18 1.7347E-18 -0.02"
+        rpy="0 0 0" />
+      <mass
+        value="0.0036771" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://adaption_finger/meshes/upper_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://adaption_finger/meshes/upper_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="tail_joint"
+    type="continuous">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="finger_base_link" />
+    <child
+      link="upper_link" />
+    <axis
+      xyz="0 -1 0" />
+  </joint>
+  <link
+    name="tip_link">
+    <inertial>
+      <origin
+        xyz="5.2042E-18 1.7347E-18 -0.02"
+        rpy="0 0 0" />
+      <mass
+        value="0.0035142" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://adaption_finger/meshes/tip_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75294 0.75294 0.75294 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://adaption_finger/meshes/tip_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="tip_joint"
+    type="continuous" >
+    <origin
+      xyz="0 0 -0.04"
+      rpy="0 0 0" />
+    <parent
+      link="upper_link" />
+    <child
+      link="tip_link" />
+    <axis
+      xyz="0 -1 0" />
+  </joint>
+
+<xacro:if value="${sur_type == '1'}" >
+  <link
+    name="base_link">
+    <visual>
+      <origin
+        xyz="0 0 -0.005"
+        rpy="0 0 0" />
+      <geometry>
+        <box filename="package://adaption_finger/meshes/surface.STL" />
+      </geometry>
+    </visual>
+  </link>
+</xacro:if>
+
+<xacro:if value="${sur_type == '2'" >
+  <link
+    name="base_link">
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh size="0.4 0.4 0.01" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.75 0.4 0.294 1" />
+      </material>
+    </visual>
+  </link>
+</xacro:if>
+  <joint
+    name="fake_joint"
+    type="prismatic">
+    <origin
+      xyz="0 0 0.054641"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="finger_base_link" />
+    <axis
+      xyz="1 0 0" />
+    <limit
+      lower="-1.0"
+      upper="1.0" 
+      effort="100"
+      velocity="1" />
+  </joint>
+
+</robot>

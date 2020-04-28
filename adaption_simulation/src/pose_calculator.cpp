@@ -23,10 +23,34 @@ namespace adaption_simulation {
       return;
     }
     ROS_INFO("Init pose is: x: %f, y: %f, z: %f, theta1: %f, theta2: %f", init_pose_["x"], init_pose_["y"], init_pose_["z"], init_pose_["theta1"], init_pose_["theta2"]);
+
     if (!ros::param::get("adaption/Surface", this->surface_type_)){
       ROS_ERROR("Fail to read surface parameters.");
       return;
     }
+    switch (surface_type_) {
+      case 1:
+        ROS_ERROR("case 1: plain");
+        break;
+      case 2: {
+        ROS_ERROR("case 2: incline");
+        std::map<std::string, double> line;
+        if (!ros::param::get("adaption/Line", line)) {
+          ROS_ERROR("Fail to read line parameters.");
+          return;
+        }
+        this->surface_param.push_back(line["A"]);
+        this->surface_param.push_back(line["B"]);
+        this->surface_param.push_back(line["C"]);
+        this->surface_param.push_back(std::atan(-line["B"] / line["A"]));
+        break;
+      }
+      case 3:
+        break;
+      default:
+        break;
+    }
+    
     if (!ros::param::get("adaption/SurfaceLength", this->surface_length_)){
       ROS_ERROR("Fail to read surface length parameters.");
       return;
@@ -94,7 +118,7 @@ namespace adaption_simulation {
     double dy = this->finger_length_[0] * cos(theta1) + this->finger_length_[1] * cos(theta2);
     double head_x = dx + this->now_pos[0];
     double head_y = this->now_pos[1] - dy;
-    ROS_INFO("head_y is: %f", head_y);
+    ROS_INFO("head_x is: %f, head_y is: %f", head_x, head_y);
     if (head_x > this->surface_length_) {
       contactForce.Fx = 0;
       contactForce.Fy = 0;
@@ -102,12 +126,12 @@ namespace adaption_simulation {
       return;
     }
     switch (this->surface_type_) {
-      case 1:
+      case 1: {
         if (head_y > 0) {
           contactForce.Fx = 0;
           contactForce.Fy = 0;
         } else {
-          double d_length = - head_y / cos(theta1);
+          double d_length = -head_y / cos(theta1);
           this->a2 = finger_length_[1] - d_length;
           double fn = d_length * this->finger_k_;
           double ff = fn * this->mu_;
@@ -115,7 +139,27 @@ namespace adaption_simulation {
           contactForce.Fy = fn;
         }
         break;
+      }
+      case 2: {
+        // incline
+        double dis = this->surface_param[0] * head_x + surface_param[1] * head_y + surface_param[2];
+        ROS_INFO_STREAM("dis is" << dis);
+        if (dis > 0) {
+          contactForce.Fx = 0;
+          contactForce.Fy = 0;
+        } else {
+          dis /= std::sqrt(surface_param[0] * surface_param[0] + surface_param[1] * surface_param[1]);
+          dis /= std::abs(cos(surface_param[3] - now_ang[0] - now_ang[1]));
+          double fn = dis * this->finger_k_;
+          double ff = fn * this->mu_;
+          contactForce.Fy = fn * cos(surface_param[3]) + ff * sin(surface_param[3]);
+          contactForce.Fx = -fn * sin(surface_param[3]) + ff * cos(surface_param[3]);
+        }
+        break;
+      }
       default:
+        contactForce.Fx = 0;
+        contactForce.Fy = 0;
         break;
     }
     //this->force_pub_.publish(contactForce);
@@ -136,16 +180,16 @@ namespace adaption_simulation {
     g_theta(1) = finger_weight_[1] * this->g * a2 * sin(this->now_ang[0] + now_ang[1]);
     g_theta(0) = g_theta(1) + (finger_weight_[0] + finger_weight_[1]) * g * sin(now_ang[0]);
     double temp = finger_weight_[1] * a1 * a2 * sin(now_ang[1]);
-    // b_dt_ddt(0) = -temp * (2 * ang_vel[0] * ang_vel[1] + ang_vel[1] * ang_vel[1]);
-    // b_dt_ddt(1) = temp * ang_vel[0] * ang_vel[0];
+    b_dt_ddt(0) = -temp * (2 * ang_vel[0] * ang_vel[1] + ang_vel[1] * ang_vel[1]);
+    b_dt_ddt(1) = temp * ang_vel[0] * ang_vel[0];
     double dx2 = a2 * sin(now_ang[0] + now_ang[1]);
     double dy2 = a2 * cos(now_ang[0] + now_ang[1]);
     u_jf(0) = this->torque[0] + (dx2 + a1 * sin(now_ang[0])) * contactForce.Fy
         + (dy2 + a1 * cos(now_ang[0])) * contactForce.Fx - 0.3 * ang_vel[0];
     u_jf(1) = this->torque[1] + dx2 * contactForce.Fy + dy2 * contactForce.Fx - 0.3 * ang_vel[1];
     
-    // dd_theta = m_theta.colPivHouseholderQr().solve(u_jf - b_dt_ddt - g_theta);
-    dd_theta = m_theta.colPivHouseholderQr().solve(u_jf - g_theta);
+    dd_theta = m_theta.colPivHouseholderQr().solve(u_jf - b_dt_ddt - g_theta);
+    // dd_theta = m_theta.colPivHouseholderQr().solve(u_jf - g_theta);
 
     ROS_INFO("accelerate is: %f %f", ang_acc[0], ang_acc[1]);
     ROS_INFO("angle is: %f %f", now_ang[0], now_ang[1]);

@@ -31,6 +31,7 @@ namespace adaption_simulation {
     //double beta_ve_;
     double mu_;
     double surface_length_;
+    std::vector<double> surface_param;
     double g;
     double tail_vel;
     
