@@ -36,6 +36,7 @@ def read_file(file, duration=0):
     topic_names2 = ['adaption/finger_info',]
     data_set1 = {'fx': [], 'fy': [], 'f': [], 't': []}
     data_set2 = {'x': [], 'theta1': [], 'theta2': []}
+    force_set = {'f': [], 't': []}
 
     start = 0
     for topic, msg, t in bag.read_messages(topics=topic_names1):
@@ -51,6 +52,10 @@ def read_file(file, duration=0):
         data_set1['f'].append(f)
         data_set1['t'].append(msg.stamp.to_sec())
     data_set1['t'] = [x - start for x in data_set1['t']]
+    for i in range(len(data_set1['f'])):
+        if data_set1['t'][i] > 5.0:
+            force_set['f'].append(data_set1['f'][i])
+            force_set['t'].append(data_set1['t'][i])
     start = 0
     for topic, msg, t in bag.read_messages(topics=topic_names2):
         if start == 0 or start > t.secs:
@@ -63,7 +68,7 @@ def read_file(file, duration=0):
         data_set2['x'].append(x)
         data_set2['theta1'].append(theta1)
         data_set2['theta2'].append(theta2)
-    return data_set1, data_set2
+    return data_set1, data_set2, force_set
 
 
 def plot_data(data1, data2):
@@ -90,10 +95,15 @@ def plot_data(data1, data2):
 
 
 if __name__ == '__main__':
-    data1, data2 = read_file(
-        '../adaption_data/finger_adaption_2020-04-28-20-41-35.bag')
-    plt.figure()
+    data1, data2, force = read_file(
+        '../adaption_data/finger_adaption_2020-05-10-20-45-48.bag', 15)
+    plt.figure(figsize=(9,7))
     plot_data(data1, data2)
     # data1 = read_file('../assemble_data/smores_assembly_2019-09-11-00-12-33.bag', 8, 440)
     # plot_data(data1)
+    
+    max_force = max(force['f'][500:])
+    print(max_force)
+    print(force['t'][force['f'].index(max_force)])
+
     plt.show()

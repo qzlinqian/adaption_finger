@@ -10,9 +10,20 @@ SurfaceLength: 0.200
 # tau: 10000000  # Pa
 # E: 10000000000  # Pa
 # beta_ve: 0.2
-mu: 0.6
+mu: 0.2
 
 PoseUpdFrequency: 1000   # Hz
 ForceFdbFrequency: 100   # Hz
+delta_t: 0.005  # s
 
 TailVel: 0.005
+
+F_threshold: 0.01
+
+## For PID Controller
+Kp1: 0.0
+Ki1: 0.
+Kd1: 0.
+Kp2: 0.1
+Ki2: 0.
+Kd2: 0.

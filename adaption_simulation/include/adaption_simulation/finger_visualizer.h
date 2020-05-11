@@ -7,6 +7,7 @@
 
 #include <ros/ros.h>
 #include <sensor_msgs/JointState.h>
+#include <visualization_msgs/Marker.h>
 
 #include "adaption_msgs/FingerInfo.h"
 
@@ -16,6 +17,9 @@ namespace adaption_simulation {
     ros::NodeHandle *nh_;
     ros::Subscriber finger_info_sub_;
     ros::Publisher finger_joint_pub_;
+    int surface_type_;
+    ros::Publisher vis_pub;
+    visualization_msgs::Marker marker;
     
     void fingerInfoUpd(const adaption_msgs::FingerInfo &msg);
 

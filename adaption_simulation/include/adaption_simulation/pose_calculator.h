@@ -37,11 +37,11 @@ namespace adaption_simulation {
     double tail_vel;
     
     double torque[2], a1, a2;
-    // ros::Subscriber torque_sub_;
-    ros::Subscriber torque_sub_2;
+    ros::Subscriber torque_sub_;
+    // ros::Subscriber torque_sub_2;
     ros::Publisher finger_info_pub_;
     ros::Publisher force_pub_;
-    ros::Publisher force_pub_2;
+    // ros::Publisher force_pub_2;
     
     double matrix_k;
     double now_ang[2], ang_vel[2], ang_acc[2];
@@ -55,8 +55,8 @@ namespace adaption_simulation {
     
     void poseUpd(double delta_t);
     
-    // void torqueUpd(const adaption_msgs::JointForce &msg);
-    void torqueUpd(const std_msgs::Float64 &msg);
+    void torqueUpd(const adaption_msgs::JointForce &msg);
+    // void torqueUpd(const std_msgs::Float64 &msg);
     
     void posePub();
     

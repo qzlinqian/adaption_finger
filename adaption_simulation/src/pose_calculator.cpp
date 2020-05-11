@@ -85,10 +85,10 @@ namespace adaption_simulation {
     //this->g *= 1000;  // mm/s^2
   
     this->force_pub_ = this->_nh->advertise<adaption_msgs::ContactForce>("adaption/contact_force", 100);
-    this->force_pub_2 = this->_nh->advertise<std_msgs::Float64>("adaption/normal_force", 100);
+    // this->force_pub_2 = this->_nh->advertise<std_msgs::Float64>("adaption/normal_force", 100);
     this->finger_info_pub_ = this->_nh->advertise<adaption_msgs::FingerInfo>("adaption/finger_info", 100);
-    // this->torque_sub_ = this->_nh->subscribe("adaption/controller_torque", 1000, &PoseCal::torqueUpd, this);
-    this->torque_sub_2 = this->_nh->subscribe("adaption/controller_torque2", 1000, &PoseCal::torqueUpd, this);
+    this->torque_sub_ = this->_nh->subscribe("adaption/controller_torque", 1000, &PoseCal::torqueUpd, this);
+    // this->torque_sub_2 = this->_nh->subscribe("adaption/controller_torque2", 1000, &PoseCal::torqueUpd, this);
     
     this->matrix_k = this->finger_weight_[1] * this->finger_length_[1] * finger_length_[1];
     
@@ -208,14 +208,14 @@ namespace adaption_simulation {
     // ROS_INFO("velocity is: %f, %f", ang_vel[0], ang_vel[1]);
   }
   
-  void PoseCal::torqueUpd(const std_msgs::Float64 &msg) {
-    // this->torque[0] = msg.torque1;
-    this->torque[1] = msg.data;
-  }
-  // void PoseCal::torqueUpd(const adaption_msgs::JointForce &msg) {
-  //   this->torque[0] = msg.torque1;
-  //   this->torque[1] = msg.torque2;
+  // void PoseCal::torqueUpd(const std_msgs::Float64 &msg) {
+  //   // this->torque[0] = msg.torque1;
+  //   this->torque[1] = msg.data;
   // }
+  void PoseCal::torqueUpd(const adaption_msgs::JointForce &msg) {
+    this->torque[0] = msg.torque1;
+    this->torque[1] = msg.torque2;
+  }
   
   void PoseCal::posePub() {
     adaption_msgs::FingerInfo info;
@@ -230,7 +230,7 @@ namespace adaption_simulation {
   
   void PoseCal::forcePub() {
     this->force_pub_.publish(this->contactForce);
-    this->force_pub_2.publish(this->contactForce.Fy);
+    // this->force_pub_2.publish(this->contactForce.Fy);
   }
   
   void integrate(double* init_pos, double* init_vel, const double* acc,
