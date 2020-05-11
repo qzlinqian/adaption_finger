@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 ###############################################################################
-#                           Plot paths for assembly                           #
+#                               Plot finger info                              #
 ###############################################################################
 
 import rosbag
@@ -96,7 +96,7 @@ def plot_data(data1, data2):
 
 if __name__ == '__main__':
     data1, data2, force = read_file(
-        '../adaption_data/finger_adaption_2020-05-10-20-45-48.bag', 15)
+        '../adaption_data/finger_adaption_2020-05-11-16-11-29.bag', 15)
     plt.figure(figsize=(9,7))
     plot_data(data1, data2)
     # data1 = read_file('../assemble_data/smores_assembly_2019-09-11-00-12-33.bag', 8, 440)

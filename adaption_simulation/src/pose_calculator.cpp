@@ -152,10 +152,12 @@ namespace adaption_simulation {
         } else {
           dis /= std::sqrt(surface_param[0] * surface_param[0] + surface_param[1] * surface_param[1]);
           dis /= std::abs(cos(surface_param[3] - now_ang[0] - now_ang[1]));
-          double fn = dis * this->finger_k_;
+          double fn = -dis * this->finger_k_;
           double ff = fn * this->mu_;
-          contactForce.Fy = fn * cos(surface_param[3]) + ff * sin(surface_param[3]);
-          contactForce.Fx = -fn * sin(surface_param[3]) + ff * cos(surface_param[3]);
+          // contactForce.Fy = fn * cos(surface_param[3]) + ff * sin(surface_param[3]);
+          // contactForce.Fx = -fn * sin(surface_param[3]) + ff * cos(surface_param[3]);
+          contactForce.Fx = -ff;
+          contactForce.Fy = fn;
         }
         break;
       }

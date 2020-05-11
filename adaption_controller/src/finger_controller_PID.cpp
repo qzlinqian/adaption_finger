@@ -42,8 +42,15 @@ namespace adaption_controller {
   
   void PIDController::controller(double fx, double fy, double &torque1, double &torque2) {
     double pres_f = sqrt(fx*fx + fy*fy);
-    if (pres_f < f_thre) {
-      pres_f = 0;
+    if (pres_f < f_thre) {   // keep force in (f_thre/10, f_thre)
+      if (pres_f > f_thre / 10) {
+        pres_f = 0;
+      } else {
+        pres_f -= f_thre / 10;
+        pres_f *= 100;
+      }
+    } else {
+      pres_f -= f_thre;
     }
     integrate += pres_f;
     diff = pres_f - prev_f;
