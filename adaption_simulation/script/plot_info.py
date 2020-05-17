@@ -8,9 +8,9 @@ import matplotlib.pyplot as plt
 # from matplotlib import rc
 # rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
 ## for Palatino and other serif fonts use:
-#rc('font',**{'family':'serif','serif':['Palatino']})
+# rc('font',**{'family':'serif','serif':['Palatino']})
 # rc('text', usetex=True)
-# import numpy as np
+import numpy as np
 # import quaternion
 import math
 
@@ -82,6 +82,10 @@ def plot_data(data1, data2):
     plt.plot(data1['t'], data1['fx'], color='c', label='Fx')
     plt.plot(data1['t'], data1['fy'], color='b', label='Fy')
     plt.plot(data1['t'], data1['f'], color='m', label='F')
+    a = np.array(data1['t']) * 0.5
+    # f_des = np.sin(a * 0.2 * np.pi) + 2
+    f_des = [x if x < 5 else 5 for x in a]
+    plt.plot(data1['t'],f_des, color='g', label='F_des')
     plt.legend()
     plt.xlabel('time/s')
     plt.ylabel('Force/N')
@@ -96,7 +100,7 @@ def plot_data(data1, data2):
 
 if __name__ == '__main__':
     data1, data2, force = read_file(
-        '../adaption_data/finger_adaption_2020-05-11-16-11-29.bag', 15)
+        '../adaption_data/finger_adaption_2020-05-17-21-17-03.bag', 15)
     plt.figure(figsize=(9,7))
     plot_data(data1, data2)
     # data1 = read_file('../assemble_data/smores_assembly_2019-09-11-00-12-33.bag', 8, 440)

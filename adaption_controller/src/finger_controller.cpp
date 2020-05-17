@@ -1,6 +1,10 @@
-//
-// Created by qianlin on 4/27/20.
-//
+/*
+* @Author: Qian Lin
+* @Date:   2020-05-10 11:14:45
+* @Last Modified by:   Qian Lin
+* @Last Modified time: 2020-05-15 16:05:18
+*/
+
 
 #include "adaption_controller/finger_controller.h"
 

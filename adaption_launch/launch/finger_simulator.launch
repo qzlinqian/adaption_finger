@@ -16,7 +16,7 @@
   <node
     name="finger_controller"
     pkg="adaption_controller"
-    type="PID_controller"
+    type="PID_controller_line"
     output="screen" />
 
   <node

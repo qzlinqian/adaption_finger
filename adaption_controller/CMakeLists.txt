@@ -159,6 +159,18 @@ target_link_libraries(PID_controller
   finger_controller
 )
 
+add_executable(PID_controller_sin src/finger_controller_PID_sin.cpp)
+target_link_libraries(PID_controller_sin
+  ${catkin_LIBRARIES}
+  finger_controller
+)
+
+add_executable(PID_controller_line src/finger_controller_PID_line.cpp)
+target_link_libraries(PID_controller_line
+  ${catkin_LIBRARIES}
+  finger_controller
+)
+
 #############
 ## Install ##
 #############
