@@ -152,6 +152,12 @@ target_link_libraries(
   ${catkin_LIBRARIES}
 )
 
+add_executable(inverse_kinematics src/inverse_kinematics.cpp)
+target_link_libraries(
+  inverse_kinematics
+  ${catkin_LIBRARIES}
+)
+
 add_executable(visualize_helper src/finger_visualizer.cpp)
 target_link_libraries(
   visualize_helper

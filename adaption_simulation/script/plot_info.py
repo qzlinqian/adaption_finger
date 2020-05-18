@@ -33,9 +33,11 @@ def quaternion_to_euler(x, y, z, w):
 def read_file(file, duration=0):
     bag = rosbag.Bag(file)
     topic_names1 = ['adaption/contact_force',]
-    topic_names2 = ['adaption/finger_info',]
+    # topic_names2 = ['adaption/finger_info',]
+    topic_names2 = ['adaption/tip_pos',]
     data_set1 = {'fx': [], 'fy': [], 'f': [], 't': []}
-    data_set2 = {'x': [], 'theta1': [], 'theta2': []}
+    # data_set2 = {'x': [], 'theta1': [], 'theta2': []}
+    data_set2 = {'x': [], 'y': [], 't': []}
     force_set = {'f': [], 't': []}
 
     start = 0
@@ -57,50 +59,67 @@ def read_file(file, duration=0):
             force_set['f'].append(data_set1['f'][i])
             force_set['t'].append(data_set1['t'][i])
     start = 0
+    # for topic, msg, t in bag.read_messages(topics=topic_names2):
+    #     if start == 0 or start > t.secs:
+    #         start = t.secs
+    #     if duration > 0 and t.secs - start > duration:
+    #         break
+    #     x = msg.position.x
+    #     theta1 = msg.angle.theta1
+    #     theta2 = msg.angle.theta2
+    #     data_set2['x'].append(x)
+    #     data_set2['theta1'].append(theta1)
+    #     data_set2['theta2'].append(theta2)
     for topic, msg, t in bag.read_messages(topics=topic_names2):
         if start == 0 or start > t.secs:
             start = t.secs
         if duration > 0 and t.secs - start > duration:
             break
-        x = msg.position.x
-        theta1 = msg.angle.theta1
-        theta2 = msg.angle.theta2
+        x = msg.x
+        y = msg.z
         data_set2['x'].append(x)
-        data_set2['theta1'].append(theta1)
-        data_set2['theta2'].append(theta2)
+        data_set2['y'].append(y)
     return data_set1, data_set2, force_set
 
 
 def plot_data(data1, data2):
-    # plt.xlim(-0.8, 0.8)
+    # plt.xlim(0, 16)
     # plt.ylim(-0.8, 0.8)
     # plt.xticks([-0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6])
     # plt.yticks([-0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8])
     # plt.axis('equal')
 
     plt.subplot(2,1,1)
+    plt.xlim(0, 16)
     plt.plot(data1['t'], data1['fx'], color='c', label='Fx')
     plt.plot(data1['t'], data1['fy'], color='b', label='Fy')
     plt.plot(data1['t'], data1['f'], color='m', label='F')
-    a = np.array(data1['t']) * 0.5
+    # a = np.array(data1['t']) * 0.5
     # f_des = np.sin(a * 0.2 * np.pi) + 2
-    f_des = [x if x < 5 else 5 for x in a]
-    plt.plot(data1['t'],f_des, color='g', label='F_des')
+    # f_des = [x if x < 5 else 5 for x in a]
+    # f_des = [1] * len(data1['t'])
+    # plt.plot(data1['t'],f_des, color='g', label='F_des')
+    plt.hlines(1, -0.5, 15.5, colors='r', linestyles='dashed')
     plt.legend()
     plt.xlabel('time/s')
     plt.ylabel('Force/N')
 
     plt.subplot(2,1,2)
-    plt.plot(data2['x'], data2['theta1'], color='g', label='theta_1')
-    plt.plot(data2['x'], data2['theta2'], color='b', label='theta_2')
-    plt.legend()
+    plt.xlim(0, 0.08)
+    # plt.ylim(-0.001, 0.01)
+    # plt.plot(data2['x'], data2['theta1'], color='g', label='theta_1')
+    # plt.plot(data2['x'], data2['theta2'], color='b', label='theta_2')
+    x = [0, 0.04, 0.04, 0.08,]
+    y = [0, 0.004, 0.002, 0.002,]
+    plt.plot(data2['x'], data2['y'], color='g')
+    plt.plot(x, y, color='r', linestyle='dashed')
     plt.xlabel('x/m')
-    plt.ylabel('theta')
+    plt.ylabel('y/m')
 
 
 if __name__ == '__main__':
     data1, data2, force = read_file(
-        '../adaption_data/finger_adaption_2020-05-17-21-17-03.bag', 15)
+        '../adaption_data/finger_adaption_2020-05-18-15-52-33.bag', 75)
     plt.figure(figsize=(9,7))
     plot_data(data1, data2)
     # data1 = read_file('../assemble_data/smores_assembly_2019-09-11-00-12-33.bag', 8, 440)

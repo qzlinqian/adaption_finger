@@ -5,23 +5,33 @@
   <node
     name="finger_pose_calculator"
     pkg="adaption_simulation"
-    type="pose_calculator"
+    type="inverse_kinematics"
     output="screen" />
+  <!-- <node
+    name="finger_pose_calculator"
+    pkg="adaption_simulation"
+    type="pose_calculator"
+    output="screen" /> -->
   <node
     name="visualize_helper"
     pkg="adaption_simulation"
     type="visualize_helper"
     output="screen" />
 
-  <node
+  <!-- <node
     name="finger_controller"
     pkg="adaption_controller"
     type="PID_controller_line"
+    output="screen" /> -->
+  <node
+    name="finger_controller"
+    pkg="adaption_controller"
+    type="impedance_controller"
     output="screen" />
 
   <node
     pkg="rosbag"
     type="record"
     name="rosbag_record"
-    args="record -o finger_adaption.bag adaption/contact_force adaption/finger_info"/>
+    args="record -o finger_adaption.bag adaption/contact_force adaption/finger_info adaption/tip_pos"/>
 </launch>
