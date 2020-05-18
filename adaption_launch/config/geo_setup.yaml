@@ -5,14 +5,40 @@ g: 9.8
 k: 10000   # N/m
 Surface: 1
 Line: {A: -1, B: 10, C: 0}  # B>0!!!
-SurfaceLength: 0.200
+SurfaceLength: 2.00
 # 1: plain surface; 2: slant surface; 3: circle
 # tau: 10000000  # Pa
 # E: 10000000000  # Pa
 # beta_ve: 0.2
-mu: 0.6
+mu: 0.2
 
 PoseUpdFrequency: 1000   # Hz
 ForceFdbFrequency: 100   # Hz
+delta_t: 0.005  # s
 
-TailVel: 0.005
+TailVel: 0.05
+
+## For haptic explore
+F_threshold: 0.01
+
+## For contact tooling
+ForceCtrlFrequency: 0.2 * rad(pi)
+ForceCtrlAmplitude: 1
+ForceCtrlOffset: 2
+
+## For contact tooling
+ForceCtrlK: 0.5
+
+## For PID Controller
+# Kp1: 0.01
+# Ki1: 0.0
+# Kd1: 0.0
+# Kp2: 0.04
+# Ki2: 0.0001
+# Kd2: 0.05
+Kp1: 0.00
+Ki1: 0.0
+Kd1: 0.0
+Kp2: 0.03
+Ki2: 0.0002
+Kd2: 0.01

@@ -1,6 +1,11 @@
-//
-// Created by qianlin on 4/6/20.
-//
+/*
+* @Author: Qian Lin
+* @Date:   2020-05-11 15:59:00
+* @Last Modified by:   Qian Lin
+* @Last Modified time: 2020-05-15 16:07:06
+*/
+
+
 #include <cmath>
 
 #include <eigen3/Eigen/Dense>
@@ -85,8 +90,10 @@ namespace adaption_simulation {
     //this->g *= 1000;  // mm/s^2
   
     this->force_pub_ = this->_nh->advertise<adaption_msgs::ContactForce>("adaption/contact_force", 100);
+    // this->force_pub_2 = this->_nh->advertise<std_msgs::Float64>("adaption/normal_force", 100);
     this->finger_info_pub_ = this->_nh->advertise<adaption_msgs::FingerInfo>("adaption/finger_info", 100);
     this->torque_sub_ = this->_nh->subscribe("adaption/controller_torque", 1000, &PoseCal::torqueUpd, this);
+    // this->torque_sub_2 = this->_nh->subscribe("adaption/controller_torque2", 1000, &PoseCal::torqueUpd, this);
     
     this->matrix_k = this->finger_weight_[1] * this->finger_length_[1] * finger_length_[1];
     
@@ -106,7 +113,7 @@ namespace adaption_simulation {
   
   void PoseCal::forceCal() {
     //adaption_msgs::ContactForce contactForce;
-    //contactForce.stamp = info.stamp;
+    contactForce.stamp = ros::Time::now();
     //float n = (this->finger_weight_[0] + this->finger_weight_[1]) * g * cos(info.angle.alpha)
     //        + info.force.force * sin(info.angle.alpha);
     //float fm = (this->finger_weight_[0] + this->finger_weight_[1]) * g * sin(info.angle.alpha)
@@ -150,10 +157,12 @@ namespace adaption_simulation {
         } else {
           dis /= std::sqrt(surface_param[0] * surface_param[0] + surface_param[1] * surface_param[1]);
           dis /= std::abs(cos(surface_param[3] - now_ang[0] - now_ang[1]));
-          double fn = dis * this->finger_k_;
+          double fn = -dis * this->finger_k_;
           double ff = fn * this->mu_;
-          contactForce.Fy = fn * cos(surface_param[3]) + ff * sin(surface_param[3]);
-          contactForce.Fx = -fn * sin(surface_param[3]) + ff * cos(surface_param[3]);
+          // contactForce.Fy = fn * cos(surface_param[3]) + ff * sin(surface_param[3]);
+          // contactForce.Fx = -fn * sin(surface_param[3]) + ff * cos(surface_param[3]);
+          contactForce.Fx = -ff;
+          contactForce.Fy = fn;
         }
         break;
       }
@@ -168,20 +177,20 @@ namespace adaption_simulation {
   
   void PoseCal::poseUpd(double delta_t) {
     Eigen::Matrix2d m_theta;
-    m_theta(1,1) = this->matrix_k;  // k
-    m_theta(1,0) = this->matrix_k + this->finger_weight_[1] * a1 * a2 * cos(this->now_ang[1]);
+    m_theta(1,1) = this->matrix_k/2;  // k
+    m_theta(1,0) = this->matrix_k/12 + this->finger_weight_[1] * a1 * a2 * cos(this->now_ang[1])/2;
     m_theta(0,1) = m_theta(1,0);
-    m_theta(0,0) = m_theta(1,0) * 2 - matrix_k + (finger_weight_[0] + finger_weight_[1]) * a1 * a1;
+    m_theta(0,0) = (finger_weight_[0]/3 + finger_weight_[1]) * a1 * a1 + this->matrix_k/12;
     // m_theta(1,0) = (finger_length_[1] * finger_length_[1] / 2 + finger_length_[0] * finger_length_[0] + finger_length_[0] * finger_length_[1] /2 * cos(now_ang[1])) * finger_weight_[1];
     // m_theta(1,1) = (3 * finger_length_[1] * finger_length_[1] + finger_length_[0] * finger_length_[1] /2 * cos(now_ang[1])) * finger_weight_[1];
     // m_theta(0,0)
     
     Eigen::Vector2d b_dt_ddt, g_theta, u_jf, dd_theta;
-    g_theta(1) = finger_weight_[1] * this->g * a2 * sin(this->now_ang[0] + now_ang[1]);
-    g_theta(0) = g_theta(1) + (finger_weight_[0] + finger_weight_[1]) * g * sin(now_ang[0]);
-    double temp = finger_weight_[1] * a1 * a2 * sin(now_ang[1]);
-    b_dt_ddt(0) = -temp * (2 * ang_vel[0] * ang_vel[1] + ang_vel[1] * ang_vel[1]);
-    b_dt_ddt(1) = temp * ang_vel[0] * ang_vel[0];
+    g_theta(1) = finger_weight_[1]/2 * g * a2 * sin(now_ang[0] + now_ang[1]);
+    g_theta(0) = g_theta(1) + (finger_weight_[0]/2 + finger_weight_[1]) * g * a1 * sin(now_ang[0]);
+    // double temp = finger_weight_[1] * a1 * a2 * sin(now_ang[1]);
+    b_dt_ddt(0) = -finger_weight_[1] * a1 * a2 * sin(now_ang[1]) * now_ang[1] * now_ang[1] /2;
+    b_dt_ddt(1) = finger_weight_[1] * a1 * a2 * (sin(now_ang[1]) + cos(now_ang[1])) * now_ang[1] * now_ang[2] /2;
     double dx2 = a2 * sin(now_ang[0] + now_ang[1]);
     double dy2 = a2 * cos(now_ang[0] + now_ang[1]);
     u_jf(0) = this->torque[0] + (dx2 + a1 * sin(now_ang[0])) * contactForce.Fy
@@ -206,6 +215,10 @@ namespace adaption_simulation {
     // ROS_INFO("velocity is: %f, %f", ang_vel[0], ang_vel[1]);
   }
   
+  // void PoseCal::torqueUpd(const std_msgs::Float64 &msg) {
+  //   // this->torque[0] = msg.torque1;
+  //   this->torque[1] = msg.data;
+  // }
   void PoseCal::torqueUpd(const adaption_msgs::JointForce &msg) {
     this->torque[0] = msg.torque1;
     this->torque[1] = msg.torque2;
@@ -224,6 +237,7 @@ namespace adaption_simulation {
   
   void PoseCal::forcePub() {
     this->force_pub_.publish(this->contactForce);
+    // this->force_pub_2.publish(this->contactForce.Fy);
   }
   
   void integrate(double* init_pos, double* init_vel, const double* acc,
@@ -286,11 +300,11 @@ int main(int argc, char** argv) {
     calculator.forceCal();
     calculator.poseUpd(time_interval);
     calculator.posePub();
-    i++;
-    if (i > report) {
+    // i++;
+    // if (i > report) {
       calculator.forcePub();
-      i = 0;
-    }
+      // i = 0;
+    // }
     r.sleep();
   }
   
