@@ -50,8 +50,8 @@ def read_file(file, duration=0):
         fy = msg.Fy
         f = math.sqrt(fx * fx + fy * fy)
         data_set1['fx'].append(fx)
-        data_set1['fy'].append(fy)
-        data_set1['f'].append(f)
+        data_set1['fy'].append(fy/2)
+        data_set1['f'].append(f/2)
         data_set1['t'].append(msg.stamp.to_sec())
     data_set1['t'] = [x - start for x in data_set1['t']]
     for i in range(len(data_set1['f'])):
@@ -89,9 +89,9 @@ def plot_data(data1, data2):
     # plt.yticks([-0.8, -0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8])
     # plt.axis('equal')
 
-    plt.subplot(2,1,1)
-    plt.xlim(0, 16)
-    plt.plot(data1['t'], data1['fx'], color='c', label='Fx')
+    # plt.subplot(2,1,1)
+    plt.xlim(0, 1)
+    # plt.plot(data1['t'], data1['fx'], color='c', label='Fx')
     plt.plot(data1['t'], data1['fy'], color='b', label='Fy')
     plt.plot(data1['t'], data1['f'], color='m', label='F')
     # a = np.array(data1['t']) * 0.5
@@ -99,34 +99,34 @@ def plot_data(data1, data2):
     # f_des = [x if x < 5 else 5 for x in a]
     # f_des = [1] * len(data1['t'])
     # plt.plot(data1['t'],f_des, color='g', label='F_des')
-    plt.hlines(1, -0.5, 15.5, colors='r', linestyles='dashed')
+    plt.hlines(1, -0.5, 1.5, colors='r', linestyles='dashed')
     plt.legend()
     plt.xlabel('time/s')
     plt.ylabel('Force/N')
 
-    plt.subplot(2,1,2)
-    plt.xlim(0, 0.08)
-    # plt.ylim(-0.001, 0.01)
-    # plt.plot(data2['x'], data2['theta1'], color='g', label='theta_1')
-    # plt.plot(data2['x'], data2['theta2'], color='b', label='theta_2')
-    x = [0, 0.04, 0.04, 0.08,]
-    y = [0, 0.004, 0.002, 0.002,]
-    plt.plot(data2['x'], data2['y'], color='g')
-    plt.plot(x, y, color='r', linestyle='dashed')
-    plt.xlabel('x/m')
-    plt.ylabel('y/m')
+    # plt.subplot(2,1,2)
+    # plt.xlim(0, 0.08)
+    # # plt.ylim(-0.001, 0.01)
+    # # plt.plot(data2['x'], data2['theta1'], color='g', label='theta_1')
+    # # plt.plot(data2['x'], data2['theta2'], color='b', label='theta_2')
+    # x = [0, 0.04, 0.04, 0.08,]
+    # y = [0, 0.004, 0.002, 0.002,]
+    # plt.plot(data2['x'], data2['y'], color='g')
+    # plt.plot(x, y, color='r', linestyle='dashed')
+    # plt.xlabel('x/m')
+    # plt.ylabel('y/m')
 
 
 if __name__ == '__main__':
     data1, data2, force = read_file(
-        '../adaption_data/finger_adaption_2020-05-18-15-52-33.bag', 75)
+        '../adaption_data/finger_adaption_2020-06-06-18-00-48.bag', 16)
     plt.figure(figsize=(9,7))
     plot_data(data1, data2)
     # data1 = read_file('../assemble_data/smores_assembly_2019-09-11-00-12-33.bag', 8, 440)
     # plot_data(data1)
     
-    max_force = max(force['f'][500:])
-    print(max_force)
-    print(force['t'][force['f'].index(max_force)])
+    # max_force = max(force['f'][500:])
+    # print(max_force)
+    # print(force['t'][force['f'].index(max_force)])
 
     plt.show()

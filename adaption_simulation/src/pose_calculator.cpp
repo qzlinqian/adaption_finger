@@ -2,7 +2,7 @@
 * @Author: Qian Lin
 * @Date:   2020-05-11 15:59:00
 * @Last Modified by:   Qian Lin
-* @Last Modified time: 2020-05-15 16:07:06
+* @Last Modified time: 2020-07-06 00:20:08
 */
 
 
@@ -300,11 +300,11 @@ int main(int argc, char** argv) {
     calculator.forceCal();
     calculator.poseUpd(time_interval);
     calculator.posePub();
-    // i++;
-    // if (i > report) {
+    i++;
+    if (i > report) {
       calculator.forcePub();
-      // i = 0;
-    // }
+      i = 0;
+    }
     r.sleep();
   }
   

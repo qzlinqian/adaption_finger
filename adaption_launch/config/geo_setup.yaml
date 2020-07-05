@@ -3,7 +3,7 @@ InitialPose: { x: 0.0, y: 0.0, z: 0.054641 , theta1: rad(pi/3), theta2: rad(pi/6
 weight: [1, 1,]
 g: 9.8
 k: 10000   # N/m
-Surface: 4
+Surface: 2
 Line: {A: -1, B: 10, C: 0}  # B>0!!!
 SurfaceLength: 2.00
 # 1: plain surface; 2: slant surface; 3: circle
@@ -12,14 +12,14 @@ SurfaceLength: 2.00
 # beta_ve: 0.2
 mu: 0.2
 
-PoseUpdFrequency: 100   # Hz
+PoseUpdFrequency: 1000   # Hz, make sure it's not less than 1000
 ForceFdbFrequency: 100   # Hz
 delta_t: 0.005  # s
 
-TailVel: 0.001
+TailVel: 0.005
 
 ## For haptic explore
-F_threshold: 1
+F_threshold: 0.01
 
 ## For contact tooling
 ForceCtrlFrequency: 0.2 * rad(pi)
