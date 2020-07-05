@@ -6,10 +6,9 @@
     default="False" />
   <param
     name="robot_description"
-    textfile="$(find adaption_finger)/urdf/adaption_finger_backup.urdf" 
-    sur_type="1"/>
-  <rosparam command="delete" ns="adaption"/>
-  <rosparam command="load" file="$(find adaption_launch)/config/geo_setup.yaml" ns="adaption"/>
+    textfile="$(find adaption_finger)/urdf/adaption_finger_backup.urdf" />
+  <!--  <rosparam command="delete" ns="adaption"/>
+  <rosparam command="load" file="$(find adaption_launch)/config/geo_setup.yaml" ns="adaption"/> -->
   <param
     name="use_gui"
     value="$(arg gui)" />

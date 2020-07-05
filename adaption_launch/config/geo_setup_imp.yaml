@@ -3,7 +3,7 @@ InitialPose: { x: 0.0, y: 0.0, z: 0.054641 , theta1: rad(pi/3), theta2: rad(pi/6
 weight: [1, 1,]
 g: 9.8
 k: 10000   # N/m
-Surface: 2
+Surface: 2  # 1 || 2 || 3 || 4
 Line: {A: -1, B: 10, C: 0}  # B>0!!!
 SurfaceLength: 2.00
 # 1: plain surface; 2: slant surface; 3: circle
@@ -22,26 +22,7 @@ TailVel: 0.005
 F_threshold: 0.01
 
 ## For contact tooling
-ForceCtrlFrequency: 0.2 * rad(pi)
-ForceCtrlAmplitude: 1
-ForceCtrlOffset: 2
-
-## For contact tooling
 ForceCtrlK: 0.5
-
-## For PID Controller
-# Kp1: 0.01
-# Ki1: 0.0
-# Kd1: 0.0
-# Kp2: 0.04
-# Ki2: 0.0001
-# Kd2: 0.05
-Kp1: 0.00
-Ki1: 0.0
-Kd1: 0.0
-Kp2: 0.03
-Ki2: 0.0002
-Kd2: 0.01
 
 ## For Impedance Controller
 ControllerM: 10
