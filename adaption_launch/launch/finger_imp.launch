@@ -1,11 +1,10 @@
 <launch>
   <rosparam command="delete" ns="adaption"/>
-  <rosparam command="load" file="$(find adaption_launch)/config/geo_setup_pid.yaml" ns="adaption"/>
-
+  <rosparam command="load" file="$(find adaption_launch)/config/geo_setup_imp.yaml" ns="adaption"/>
   <node
     name="finger_pose_calculator"
     pkg="adaption_simulation"
-    type="pose_calculator"
+    type="inverse_kinematics"
     output="screen" />
   <node
     name="visualize_helper"
@@ -16,7 +15,7 @@
   <node
     name="finger_controller"
     pkg="adaption_controller"
-    type="PID_controller"
+    type="impedance_controller"
     output="screen" />
 
   <node

@@ -171,6 +171,11 @@ target_link_libraries(PID_controller_line
   finger_controller
 )
 
+add_executable(impedance_controller src/impedance_controller.cpp)
+target_link_libraries(impedance_controller
+  ${catkin_LIBRARIES}
+)
+
 #############
 ## Install ##
 #############

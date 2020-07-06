@@ -2,7 +2,7 @@
 * @Author: Qian Lin
 * @Date:   2020-04-29 12:51:43
 * @Last Modified by:   Qian Lin
-* @Last Modified time: 2020-05-15 16:06:54
+* @Last Modified time: 2020-05-18 15:11:49
 */
 
 
@@ -24,7 +24,7 @@ namespace adaption_simulation {
 
     ROS_INFO("Visualizer initiated.");
 
-    if (surface_type_ == 2) {
+    if (surface_type_ == 2 || surface_type_ == 3) {
       vis_pub = nh_->advertise<visualization_msgs::Marker>( "visualization_marker", 0 );
       marker.header.frame_id = "base_link";
       marker.header.stamp = ros::Time();
@@ -106,7 +106,7 @@ namespace adaption_simulation {
     state_msg.name = names;
     
     this->finger_joint_pub_.publish(state_msg);
-    if (surface_type_ == 2) {
+    if (surface_type_ == 2 || surface_type_ == 3) {
       this->vis_pub.publish(marker);
     }
   }
