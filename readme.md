@@ -1,8 +1,8 @@
-Finger Adaptive Exploration
+# Finger Adaptive Exploration
 
 * This is the source code of the simulation platform of my bachelor thesis.
 * This platform can simulate the surface exploration process of mechanical finger with/without controllers.
-[]!(finger.eps)
+![](finger.eps)
 * The finger was modeled as a two-link system, the base of which could translate freely and tip placed on the surface.
 * During the moving process, the finger base would move with a constant horizontal speed along the surface.
 
@@ -10,25 +10,35 @@ Finger Adaptive Exploration
 After compiling ...
 
 ### Simulation
->>> roslaunch adaption_finger display.launch
+``` bash
+roslaunch adaption_finger display.launch
+```
 This launch file will start rviz and display the mechanical finger. The configuration of finger parameters could be find in adaption_launch/config
 
 ### Finger movement
 #### Without controller
->>> roslaunch adaption_launch finger_simulation.launch
+``` bash
+roslaunch adaption_launch finger_simulation.launch
+```
 This will launch the force and motion calculator with my dynamic and kinematic models. Since the start position of finger tip is higher than the surface, it would fall immediately after simulation started.
 
 #### Surface exploration with PID controller
 For surface exploration, the tip of the finger should not leave the surface, but the contact force should be as smaller as possible.
->>> roslaunch adaption_lauch finger_pid.launch
+``` bash
+roslaunch adaption_lauch finger_pid.launch
+```
 This will run the PID controller for surface exploration. The error of contact force was redefined for this task.
 
 #### Contact tooling with PID controller
->>> roslaunch adaption_lauch finger_pid_line.launch
+``` bash
+roslaunch adaption_lauch finger_pid_line.launch
+```
 In this case, the contact force would follow a slope rule.
 
 #### Surface follow-up with compliant controller
->>> roslaunch adaption_launch finger_imp.launch
+``` bash
+roslaunch adaption_launch finger_imp.launch
+```
 To automatically follow the surface contour, the finger was controlled with compliant controller. The shape of surface in this case could be more complex.
 
 ## Parameters
