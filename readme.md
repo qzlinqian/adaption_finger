@@ -2,7 +2,7 @@
 
 * This is the source code of the simulation platform of my bachelor thesis.
 * This platform can simulate the surface exploration process of mechanical finger with/without controllers.
-![](finger.eps)
+![](finger.png)
 * The finger was modeled as a two-link system, the base of which could translate freely and tip placed on the surface.
 * During the moving process, the finger base would move with a constant horizontal speed along the surface.
 
